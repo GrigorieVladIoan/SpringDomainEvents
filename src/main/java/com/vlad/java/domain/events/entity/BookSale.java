@@ -18,7 +18,9 @@ import java.time.LocalDateTime;
 @Builder
 public class BookSale {
 
-    @SequenceGenerator(name = "bookSale_generator", sequenceName = "seq_book_sale_id")
+
+    //So you must declare the same value on both allocationSize (Hibernate) and sequence increment by (DB)
+    @SequenceGenerator(name = "bookSale_generator", sequenceName = "seq_book_sale_id", allocationSize = 50)
     @GeneratedValue(generator = "bookSale_generator")
     @Id
     @Column(name = "book_sale_id")

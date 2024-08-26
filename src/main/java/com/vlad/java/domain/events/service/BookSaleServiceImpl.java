@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -22,7 +23,16 @@ public class BookSaleServiceImpl implements BookSaleService{
     }
 
     @Override
-    @Transactional
+    public List<BookSale> getAllBookSales(){
+        return bookSaleRepository.findAll();
+    }
+
+    @Override
+    public List<BookSale> getAllBookSalesByBookId(BigInteger bookId) {
+        return bookSaleRepository.findAllByBookId(bookId);
+    }
+
+    @Override
     public void sellBook(BigInteger bookId) {
         final var book =
                 bookRepository.findById(bookId)
@@ -31,6 +41,7 @@ public class BookSaleServiceImpl implements BookSaleService{
                         ));
         BookSale bookSale = new BookSale();
         bookSale.setBook(book);
+        bookSale.setBookId(bookId);
         bookSale.setDateSold(LocalDateTime.now());
         bookSale.setPriceSold(book.getPrice());
         bookSaleRepository.save(bookSale);

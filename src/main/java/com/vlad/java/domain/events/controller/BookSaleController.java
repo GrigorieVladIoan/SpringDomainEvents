@@ -1,11 +1,9 @@
 package com.vlad.java.domain.events.controller;
 
 import com.vlad.java.domain.events.entity.BookSale;
-import com.vlad.java.domain.events.repository.BookSaleRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.vlad.java.domain.events.service.BookSaleService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -14,19 +12,24 @@ import java.util.List;
 @RequestMapping("/vlad-api/domain-events/v1/books")
 public class BookSaleController {
 
-    private final BookSaleRepository bookSaleRepository;
+    private final BookSaleService bookSaleService;
 
-    public BookSaleController(BookSaleRepository bookSaleRepository){
-        this.bookSaleRepository = bookSaleRepository;
+    public BookSaleController(@Qualifier("emailNotifierBookSaleService") BookSaleService bookSaleService){
+        this.bookSaleService = bookSaleService;
     }
 
     @GetMapping("/sales")
     public List<BookSale> getAllBookSales(){
-        return bookSaleRepository.findAll();
+        return bookSaleService.getAllBookSales();
     }
 
     @GetMapping("/{bookId}/sales")
-    public List<BookSale> getAllBookSales(@PathVariable(name = "bookId", required = true)BigInteger bookId){
-        return bookSaleRepository.findAllByBookId(bookId);
+    public List<BookSale> getAllBookSalesByBookId(@PathVariable(name = "bookId", required = true)BigInteger bookId){
+        return bookSaleService.getAllBookSalesByBookId(bookId);
+    }
+
+    @PostMapping("/{bookId}/sales")
+    public void sellBook(@PathVariable(name = "bookId", required = true) BigInteger bookId){
+        bookSaleService.sellBook(bookId);
     }
 }
