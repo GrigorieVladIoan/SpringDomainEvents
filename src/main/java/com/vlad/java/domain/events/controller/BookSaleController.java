@@ -28,8 +28,18 @@ public class BookSaleController {
         return bookSaleService.getAllBookSalesByBookId(bookId);
     }
 
+    @GetMapping("/{bookId}/sales/count")
+    public Integer getCountBookSalesByBookId(@PathVariable(name = "bookId", required = true)BigInteger bookId){
+        return bookSaleService.getBookSalesCountByBookId(bookId);
+    }
+
     @PostMapping("/{bookId}/sales")
     public void sellBook(@PathVariable(name = "bookId", required = true) BigInteger bookId){
         bookSaleService.sellBook(bookId);
+    }
+    @PostMapping("/{bookId}/sales/count/{noOfBooksSold}")
+    public void sellBook(@PathVariable(name = "bookId", required = true) BigInteger bookId,
+                         @PathVariable(name = "noOfBooksSold", required = true) Integer noOfBooksSold){
+        bookSaleService.sellBooks(bookId, noOfBooksSold);
     }
 }

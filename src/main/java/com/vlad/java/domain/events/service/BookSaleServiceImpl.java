@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -33,6 +34,11 @@ public class BookSaleServiceImpl implements BookSaleService{
     }
 
     @Override
+    public Integer getBookSalesCountByBookId(BigInteger bookId) {
+        return bookSaleRepository.countByBookId(bookId);
+    }
+
+    @Override
     public void sellBook(BigInteger bookId) {
         final var book =
                 bookRepository.findById(bookId)
@@ -45,5 +51,27 @@ public class BookSaleServiceImpl implements BookSaleService{
         bookSale.setDateSold(LocalDateTime.now());
         bookSale.setPriceSold(book.getPrice());
         bookSaleRepository.save(bookSale);
+    }
+
+    @Override
+    @Transactional
+    public void sellBooks(BigInteger bookId, Integer noOfBooksSold) {
+        final var book =
+                bookRepository.findById(bookId)
+                        .orElseThrow(() -> new NoSuchElementException(
+                                "Book is not found"
+                        ));
+
+        List<BookSale> newBookSales = new ArrayList<>();
+        for(int i = 0; i<noOfBooksSold; i++){
+            BookSale bookSale = new BookSale();
+            bookSale.setBook(book);
+            bookSale.setBookId(bookId);
+            bookSale.setDateSold(LocalDateTime.now());
+            bookSale.setPriceSold(book.getPrice());
+            newBookSales.add(bookSale);
+        }
+        bookSaleRepository.saveAll(newBookSales);
+
     }
 }
